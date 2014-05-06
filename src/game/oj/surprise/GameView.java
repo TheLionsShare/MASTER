@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
@@ -60,18 +61,40 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 
 		private TextView statusText;
 
+		private int canvasWidth = 1100;
+		private int canvasHeight = 1;
+		
 		// Draw background as bitmap: more efficient
 		private Bitmap bgrnd;
 
-		private int canvasWidth = 1;
-		private int canvasHeight = 1;
-
-		// Drawables:
-		private Bitmap jar;
-		private Bitmap monkey;
-		private Bitmap orange;
-		private Bitmap jarScale;
-
+		 private Bitmap jar;
+	   	 private Bitmap monkey;
+	   	 private Bitmap orange;
+	   	 private Bitmap apple;
+	   	 private Bitmap banana;
+	   	 private Bitmap cherry;
+	   	 private Bitmap grape;
+	   	 private Bitmap pineapple;
+	   	 private Bitmap watermelon;
+	   	 private Bitmap bomb;
+	   	 private Bitmap dynamite;
+	   	 private Bitmap anvil;
+	   	 private Bitmap cannonball;
+	   	 
+	   	 private BitmapDrawable jarDraw;
+	   	 private BitmapDrawable orangeDraw;
+	   	 private BitmapDrawable monkeyDraw;
+	   	 private BitmapDrawable appleDraw;
+	   	 private BitmapDrawable bananaDraw;
+	   	 private BitmapDrawable cherryDraw;
+	   	 private BitmapDrawable grapeDraw;
+	   	 private BitmapDrawable pineappleDraw;
+	   	 private BitmapDrawable watermelonDraw;
+	   	 private BitmapDrawable bombDraw;
+	   	 private BitmapDrawable dynamiteDraw;
+	   	 private BitmapDrawable anvilDraw;
+	   	 private BitmapDrawable cannonballDraw;
+	   	
 		// Movement speeds for fruit and jar respectively
 		private double fallSpeed;
 		private double moveSpeed;
@@ -91,9 +114,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 
 		private SurfaceHolder surfaceHolder;
 
-		private double jarX;
-		private double jarY;
+		private int jarX = 550;
+		private int jarY = 550;
 
+		
+		
 		public OjThread(SurfaceHolder sfh, Context context, Handler handler)
 		{
 			surfaceHolder = sfh;
@@ -106,13 +131,33 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 			//monkey = res.getDrawable(R.drawable.monkey);
 		//	orange = res.getDrawable(R.drawable.orange);
 
-			bgrnd = BitmapFactory.decodeResource(res, R.drawable.jungle1);
-			orange = BitmapFactory.decodeResource(res, R.drawable.orange);
-			jar = BitmapFactory.decodeResource(res, R.drawable.ceramic);
-			//Bitmap jarScale = Bitmap.createScaledBitmap(jar, 350, 250, true);
+			 bgrnd = BitmapFactory.decodeResource(res, R.drawable.jungle1);
+			//orange = BitmapFactory.decodeResource(res, R.drawable.orange);
+			 orange = BitmapFactory.decodeResource(res, R.drawable.orange);
+	   		 jar = BitmapFactory.decodeResource(res, R.drawable.ceramic);
+	   		 monkey = BitmapFactory.decodeResource(res, R.drawable.monkey);
+	   		 apple = BitmapFactory.decodeResource(res, R.drawable.apple);
+	   		 banana = BitmapFactory.decodeResource(res, R.drawable.banana);
+	   		 cherry = BitmapFactory.decodeResource(res, R.drawable.cherry);
+	   		 grape = BitmapFactory.decodeResource(res, R.drawable.grape);
+	   		 pineapple = BitmapFactory.decodeResource(res, R.drawable.pineapple);
+	   		 watermelon = BitmapFactory.decodeResource(res,
+	   				 R.drawable.watermelon);
+	   		 
+	   		jarDraw = new BitmapDrawable(getResources(), jar);
+	   		orangeDraw = new BitmapDrawable(getResources(), orange);
+	   		monkeyDraw = new BitmapDrawable(getResources(), monkey);
+	   		appleDraw = new BitmapDrawable(getResources(), apple);
+	   		bananaDraw = new BitmapDrawable(getResources(),  banana);
+	   	 	cherryDraw = new BitmapDrawable(getResources(), cherry);
+	   		grapeDraw = new BitmapDrawable(getResources(), grape);
+	   		pineappleDraw = new BitmapDrawable(getResources(), pineapple);
+	   		watermelonDraw = new BitmapDrawable(getResources(),  watermelon);
+
+			//Bitmap jarScale = Bitmap.createScaledBitmap(jar, 500, 300, false);
 			//jarWidth = jar.getIntrinsicWidth();
 			//jarHeight = jar.getIntrinsicHeight();
-
+	   		 
 			juiceMeter = new Paint();
 			juiceMeter.setAntiAlias(true);
 			juiceMeter.setARGB(255, 120, 180, 0);
@@ -167,8 +212,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 			setState(PAUSE);
 			movement = 0;
 
-			jarX = savedState.getDouble(JAR_X);
-			jarY = savedState.getDouble(JAR_Y);
+			jarX = savedState.getInt(JAR_X);
+			jarY = savedState.getInt(JAR_Y);
 
 			score = savedState.getInt(SCORE);
 
@@ -320,6 +365,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 
 		}
 
+		public void moveLeft()
+		{
+			jarX -= 27;
+			
+			
+		}
+		
+		public void moveRight(){
+			jarX += 27;
+		}
+		
 		boolean doKeyDown(int keyCode, KeyEvent msg)
 		{
 
@@ -381,7 +437,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 			paint.setFilterBitmap(true);
 
 			canvas.drawBitmap(bgrnd, null, dest, paint);
-			
+		
 			canvas.save();
 			
 			//canvas.drawBitmap(parachuter, parachuters.get(i).getX(), parachuters.get(i).getY(), null);
@@ -391,13 +447,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 			int width = display.getWidth();
 			int height = display.getHeight();
 		*/
-			canvas.drawBitmap(orange, getWidth()/2, getHeight()/2, paint);
+			//orangeD.setBounds(new Rect(300, 400, 350, 450));
+			//orangeD.draw(canvas);
+			jarDraw.setBounds(jarX, jarY, jarX+210, 800);
+			jarDraw.draw(canvas);
+			//orangeD.BitmapDrawable(orange, getWidth()/2, getHeight()/2, paint);
 			//orange.draw(canvas);
-		
+			
 			//jar.setBounds(new Rect(200, 500, 380, 250));
 			//jar.setHeight(100);
 			//jar.setWidth(175);
-			canvas.drawBitmap(jar, getWidth()/2, getHeight(), paint);
+			
+			//jarScale.recycle();
+			//canvas.drawBitmap(jarScale, getWidth()/2, getHeight(), paint);
+			
 			//jar.draw(canvas);
 			//jar.setBounds(width/2, height/2, 300, 200);
 			
@@ -453,6 +516,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 
 	}
 
+	
 	public void onWindowFocusChanged(boolean hasWindowFocus)
 	{
 

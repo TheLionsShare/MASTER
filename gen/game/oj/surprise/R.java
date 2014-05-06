@@ -1089,20 +1089,22 @@ containing a value of this type.
         public static final int help=0x7f02005c;
         public static final int ic_launcher=0x7f02005d;
         public static final int jungle1=0x7f02005e;
-        public static final int logo=0x7f02005f;
-        public static final int monkey=0x7f020060;
-        public static final int oji=0x7f020061;
-        public static final int ojsurprise=0x7f020062;
-        public static final int orange=0x7f020063;
-        public static final int orangefresh=0x7f020064;
-        public static final int orangeicon=0x7f020065;
-        public static final int pineapple=0x7f020066;
-        public static final int play=0x7f020067;
-        public static final int playtext=0x7f020068;
-        public static final int proteinstain=0x7f020069;
-        public static final int question=0x7f02006a;
-        public static final int tnt=0x7f02006b;
-        public static final int watermelon=0x7f02006c;
+        public static final int leftarrow=0x7f02005f;
+        public static final int logo=0x7f020060;
+        public static final int monkey=0x7f020061;
+        public static final int oji=0x7f020062;
+        public static final int ojsurprise=0x7f020063;
+        public static final int orange=0x7f020064;
+        public static final int orangefresh=0x7f020065;
+        public static final int orangeicon=0x7f020066;
+        public static final int pineapple=0x7f020067;
+        public static final int play=0x7f020068;
+        public static final int playtext=0x7f020069;
+        public static final int proteinstain=0x7f02006a;
+        public static final int question=0x7f02006b;
+        public static final int rightarrow=0x7f02006c;
+        public static final int tnt=0x7f02006d;
+        public static final int watermelon=0x7f02006e;
     }
     public static final class id {
         public static final int action_bar=0x7f07001c;

@@ -14,6 +14,29 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
+
+        <ImageButton
+            android:id="@+id/imageButton1"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:background="#0000"
+            android:layout_alignParentRight="true"
+            android:onClick="moveRight"
+            android:scaleType="centerInside"
+            android:src="@drawable/rightarrow" />
+
+        <ImageButton
+            android:id="@+id/imageButton2"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="#0000"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:onClick="moveLeft"
+            android:scaleType="centerInside"
+            android:src="@drawable/leftarrow" />
+
     </RelativeLayout>
 
 </FrameLayout>
