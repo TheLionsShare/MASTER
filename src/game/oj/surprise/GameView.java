@@ -110,7 +110,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 
 		private Paint juiceMeter;
 
-		private boolean runnable;
+		private boolean runnable; 
 
 		private SurfaceHolder surfaceHolder;
 
@@ -131,7 +131,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 			//monkey = res.getDrawable(R.drawable.monkey);
 		//	orange = res.getDrawable(R.drawable.orange);
 
-			 bgrnd = BitmapFactory.decodeResource(res, R.drawable.jungle1);
+			 bgrnd = BitmapFactory.decodeResource(res, R.drawable.background);
 			//orange = BitmapFactory.decodeResource(res, R.drawable.orange);
 			 orange = BitmapFactory.decodeResource(res, R.drawable.orange);
 	   		 jar = BitmapFactory.decodeResource(res, R.drawable.ceramic);
@@ -368,7 +368,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 		public void moveLeft()
 		{
 			jarX -= 27;
-			
 			
 		}
 		
