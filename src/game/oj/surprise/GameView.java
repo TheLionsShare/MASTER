@@ -1,6 +1,12 @@
 package game.oj.surprise;
 
+import java.util.ArrayList;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+
+
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -13,28 +19,51 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.RelativeLayout.LayoutParams;
 import android.view.WindowManager;
+import android.view.animation.AccelerateInterpolator;
 
-public class GameView extends SurfaceView implements SurfaceHolder.Callback
-{
+public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
+	private ArrayList<BitmapDrawable> pictures = new ArrayList<>();
+	
 	// will be used to randomly generate fruits and bombs
 	private static final Random RNG = new Random();
+	private long score;
 
-	class OjThread extends Thread
-	{
+	private Bitmap jar;
+	private Bitmap monkey;
+	private Bitmap orange;
+	private Bitmap apple;
+	private Bitmap banana;
+	private Bitmap cherry;
+	private Bitmap grape;
+	private Bitmap pineapple;
+	private Bitmap watermelon;
+	private Bitmap bomb;
+	private Bitmap dynamite;
+	private Bitmap anvil;
+	private Bitmap cannonball;
+	
+	private Context theContext;
+	
+	class OjThread extends Thread {
 
 		// Keys used for saving the state of the game
-		private static final String JAR_X = "jarX";
-		private static final String JAR_Y = "jarY";
+		private static final String JAR_X = "jarLeft";
+		private static final String JAR_Y = "jarTop";
 		private static final String SCORE = "score";
 
 		private int gameMode = READY;
@@ -56,52 +85,31 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 		// Drawables
 		private static final int JAR = 1;
 
-		private long score;
 		private long movementDelay = 600;
 
 		private TextView statusText;
 
 		private int canvasWidth = 1100;
 		private int canvasHeight = 1;
-		
+
 		// Draw background as bitmap: more efficient
 		private Bitmap bgrnd;
 
-		 private Bitmap jar;
-	   	 private Bitmap monkey;
-	   	 private Bitmap orange;
-	   	 private Bitmap apple;
-	   	 private Bitmap banana;
-	   	 private Bitmap cherry;
-	   	 private Bitmap grape;
-	   	 private Bitmap pineapple;
-	   	 private Bitmap watermelon;
-	   	 private Bitmap bomb;
-	   	 private Bitmap dynamite;
-	   	 private Bitmap anvil;
-	   	 private Bitmap cannonball;
-	   	 
-	   	 private BitmapDrawable jarDraw;
-	   	 private BitmapDrawable orangeDraw;
-	   	 private BitmapDrawable monkeyDraw;
-	   	 private BitmapDrawable appleDraw;
-	   	 private BitmapDrawable bananaDraw;
-	   	 private BitmapDrawable cherryDraw;
-	   	 private BitmapDrawable grapeDraw;
-	   	 private BitmapDrawable pineappleDraw;
-	   	 private BitmapDrawable watermelonDraw;
-	   	 private BitmapDrawable bombDraw;
-	   	 private BitmapDrawable dynamiteDraw;
-	   	 private BitmapDrawable anvilDraw;
-	   	 private BitmapDrawable cannonballDraw;
-	   	
-		// Movement speeds for fruit and jar respectively
-		private double fallSpeed;
-		private double moveSpeed;
+		private BitmapDrawable jarDraw;
+		private BitmapDrawable orangeDraw;
+		private BitmapDrawable monkeyDraw;
+		private BitmapDrawable appleDraw;
+		private BitmapDrawable bananaDraw;
+		private BitmapDrawable cherryDraw;
+		private BitmapDrawable grapeDraw;
+		private BitmapDrawable pineappleDraw;
+		private BitmapDrawable watermelonDraw;
+		private BitmapDrawable bombDraw;
+		private BitmapDrawable dynamiteDraw;
+		private BitmapDrawable anvilDraw;
+		private BitmapDrawable cannonballDraw;
 
-		private Handler handler;
-
-		private Context context;
+		public Handler handler;
 
 		private int jarHeight;
 		private int jarWidth;
@@ -110,69 +118,70 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 
 		private Paint juiceMeter;
 
-		private boolean runnable; 
+		private boolean runnable;
 
-		private SurfaceHolder surfaceHolder;
+		public SurfaceHolder surfaceHolder;
 
-		private int jarX = 550;
-		private int jarY = 550;
+		private int jarLeft = 550;
+		private int jarTop = 550;
+		private int jarRight = jarLeft + 210;
+		private int jarBottom = 800;
 
-		
-		
-		public OjThread(SurfaceHolder sfh, Context context, Handler handler)
-		{
+		private int fruitLeft = 300;
+		private int fruitTop = 300;
+		private int fruitRight = 400;
+		private int fruitBottom = 400;
+
+		public OjThread(SurfaceHolder sfh, Context context, Handler handler) {
 			surfaceHolder = sfh;
-			this.context = context;
+			theContext = context;
 			this.handler = handler;
 
-			Resources res = context.getResources();
+			Resources res = theContext.getResources();
 
-			//jar = res.getDrawable(R.drawable.ceramic);
-			//monkey = res.getDrawable(R.drawable.monkey);
-		//	orange = res.getDrawable(R.drawable.orange);
+			bgrnd = BitmapFactory.decodeResource(res, R.drawable.jungle5);
+			// orange = BitmapFactory.decodeResource(res, R.drawable.orange);
+			orange = BitmapFactory.decodeResource(res, R.drawable.orange);
+			jar = BitmapFactory.decodeResource(res, R.drawable.ceramic);
+			monkey = BitmapFactory.decodeResource(res, R.drawable.monkey);
+			apple = BitmapFactory.decodeResource(res, R.drawable.apple);
+			banana = BitmapFactory.decodeResource(res, R.drawable.banana);
+			cherry = BitmapFactory.decodeResource(res, R.drawable.cherry);
+			grape = BitmapFactory.decodeResource(res, R.drawable.grape);
+			pineapple = BitmapFactory.decodeResource(res, R.drawable.pineapple);
+			watermelon = BitmapFactory.decodeResource(res,
+					R.drawable.watermelon);
 
-			 bgrnd = BitmapFactory.decodeResource(res, R.drawable.background);
-			//orange = BitmapFactory.decodeResource(res, R.drawable.orange);
-			 orange = BitmapFactory.decodeResource(res, R.drawable.orange);
-	   		 jar = BitmapFactory.decodeResource(res, R.drawable.ceramic);
-	   		 monkey = BitmapFactory.decodeResource(res, R.drawable.monkey);
-	   		 apple = BitmapFactory.decodeResource(res, R.drawable.apple);
-	   		 banana = BitmapFactory.decodeResource(res, R.drawable.banana);
-	   		 cherry = BitmapFactory.decodeResource(res, R.drawable.cherry);
-	   		 grape = BitmapFactory.decodeResource(res, R.drawable.grape);
-	   		 pineapple = BitmapFactory.decodeResource(res, R.drawable.pineapple);
-	   		 watermelon = BitmapFactory.decodeResource(res,
-	   				 R.drawable.watermelon);
-	   		 
-	   		jarDraw = new BitmapDrawable(getResources(), jar);
-	   		orangeDraw = new BitmapDrawable(getResources(), orange);
-	   		monkeyDraw = new BitmapDrawable(getResources(), monkey);
-	   		appleDraw = new BitmapDrawable(getResources(), apple);
-	   		bananaDraw = new BitmapDrawable(getResources(),  banana);
-	   	 	cherryDraw = new BitmapDrawable(getResources(), cherry);
-	   		grapeDraw = new BitmapDrawable(getResources(), grape);
-	   		pineappleDraw = new BitmapDrawable(getResources(), pineapple);
-	   		watermelonDraw = new BitmapDrawable(getResources(),  watermelon);
+			jarDraw = new BitmapDrawable(getResources(), jar);
+			orangeDraw = new BitmapDrawable(getResources(), orange);
+			bananaDraw = new BitmapDrawable(getResources(), banana);
+			monkeyDraw = new BitmapDrawable(getResources(), monkey);
+			appleDraw = new BitmapDrawable(getResources(), apple);
+			cherryDraw = new BitmapDrawable(getResources(), cherry);
+			grapeDraw = new BitmapDrawable(getResources(), grape);
+			pineappleDraw = new BitmapDrawable(getResources(), pineapple);
+			watermelonDraw = new BitmapDrawable(getResources(), watermelon);
+			
+			pictures.add(orangeDraw);
+			pictures.add(appleDraw);
+			pictures.add(cherryDraw);
+			pictures.add(grapeDraw);
+			pictures.add(bananaDraw);
+			pictures.add(pineappleDraw);
+			pictures.add(watermelonDraw);
 
-			//Bitmap jarScale = Bitmap.createScaledBitmap(jar, 500, 300, false);
-			//jarWidth = jar.getIntrinsicWidth();
-			//jarHeight = jar.getIntrinsicHeight();
-	   		 
 			juiceMeter = new Paint();
 			juiceMeter.setAntiAlias(true);
 			juiceMeter.setARGB(255, 120, 180, 0);
 
 			score = 0;
-
 		}
 
-		public void doStart()
-		{
-			synchronized (surfaceHolder)
-			{
+		public void doStart() {
+			synchronized (surfaceHolder) {
 
-				jarX = canvasWidth / 2;
-				jarY = canvasHeight - jarHeight / 2;
+				jarLeft = canvasWidth / 2;
+				jarTop = canvasHeight - jarHeight / 2;
 
 				lastTime = System.currentTimeMillis() + 100;
 				setState(RUNNING);
@@ -187,12 +196,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 		 *         Pauses the game, defined below
 		 * 
 		 */
-		public void pause()
-		{
-			synchronized (surfaceHolder)
-			{
-				if (gameMode == RUNNING)
-				{
+		public void pause() {
+			synchronized (surfaceHolder) {
+				if (gameMode == RUNNING) {
 					setState(PAUSE);
 				}
 
@@ -207,32 +213,26 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 		 *         Restores previous state if surfaceview is destroyed
 		 * 
 		 */
-		public synchronized void restoreState(Bundle savedState)
-		{
+		public synchronized void restoreState(Bundle savedState) {
 			setState(PAUSE);
 			movement = 0;
 
-			jarX = savedState.getInt(JAR_X);
-			jarY = savedState.getInt(JAR_Y);
+			jarLeft = savedState.getInt(JAR_X);
+			jarTop = savedState.getInt(JAR_Y);
 
 			score = savedState.getInt(SCORE);
 
 		}
 
-		public void run()
-		{
+		public void run() {
 
-			while (runnable)
-			{
+			while (runnable) {
 				Canvas c = null;
-				try
-				{
+				try {
 					c = surfaceHolder.lockCanvas(null);
-					synchronized (surfaceHolder)
-					{
+					synchronized (surfaceHolder) {
 
-						if (gameMode == RUNNING)
-						{
+						if (gameMode == RUNNING) {
 							update();
 						}
 						;
@@ -240,11 +240,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 
 					}
 
-				}
-				finally
-				{
-					if (c != null)
-					{
+				} finally {
+					if (c != null) {
 						surfaceHolder.unlockCanvasAndPost(c);
 
 					}
@@ -264,13 +261,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 		 *         jar
 		 * 
 		 */
-		public Bundle saveState(Bundle map)
-		{
-			if (map != null)
-			{
+		public Bundle saveState(Bundle map) {
+			if (map != null) {
 				map.putLong(SCORE, Long.valueOf(score));
-				map.putDouble(JAR_X, Double.valueOf(jarX));
-				map.putDouble(JAR_Y, Double.valueOf(jarY));
+				map.putDouble(JAR_X, Double.valueOf(jarLeft));
+				map.putDouble(JAR_Y, Double.valueOf(jarTop));
 
 			}
 
@@ -278,16 +273,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 
 		}
 
-		public void setRunning(boolean b)
-		{
+		public void setRunning(boolean b) {
 			runnable = b;
 
 		}
 
-		public void setState(int mode)
-		{
-			synchronized (surfaceHolder)
-			{
+		public void setState(int mode) {
+			synchronized (surfaceHolder) {
 
 				setState(mode, null);
 
@@ -295,12 +287,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 
 		}
 
-		public void setState(int mode, CharSequence message)
-		{
+		public void setState(int mode, CharSequence message) {
 			gameMode = mode;
 
-			if (gameMode == RUNNING)
-			{
+			if (gameMode == RUNNING) {
 				Message msg = handler.obtainMessage();
 				Bundle b = new Bundle();
 				b.putString("text", "");
@@ -308,38 +298,31 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 				msg.setData(b);
 				handler.sendMessage(msg);
 
-			}
-			else
-			{
-				Resources res = context.getResources();
+			} else {
+				Resources res = theContext.getResources();
 				CharSequence str = "";
 
-				if (gameMode == READY)
-				{
+				if (gameMode == READY) {
 					str = "READY";
 
 				}
 
-				else if (gameMode == PAUSE)
-				{
+				else if (gameMode == PAUSE) {
 					str = "PAUSED";
 
 				}
 
-				else if (gameMode == LOSE)
-				{
+				else if (gameMode == LOSE) {
 					str = "GAME OVER";
 
 				}
 
-				if (message != null)
-				{
+				if (message != null) {
 					str = message + "\n" + str;
 
 				}
 
-				if (gameMode == LOSE)
-				{
+				if (gameMode == LOSE) {
 					score = 0;
 
 				}
@@ -354,10 +337,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 			}
 		}
 
-		public void unpause()
-		{
-			synchronized (surfaceHolder)
-			{
+		public void unpause() {
+			synchronized (surfaceHolder) {
 				lastTime = System.currentTimeMillis() + 100;
 
 			}
@@ -365,21 +346,24 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 
 		}
 
-		public void moveLeft()
-		{
-			jarX -= 27;
-			
-		}
-		
-		public void moveRight(){
-			jarX += 27;
-		}
-		
-		boolean doKeyDown(int keyCode, KeyEvent msg)
-		{
+		public void moveLeft() {
+			if (jarLeft > 80) {
+				jarLeft -= 27;
+				jarRight -= 27;
+			}
 
-			synchronized (surfaceHolder)
-			{
+		}
+
+		public void moveRight() {
+			if (jarRight < 1200) {
+				jarLeft += 27;
+				jarRight += 27;
+			}
+		}
+
+		boolean doKeyDown(int keyCode, KeyEvent msg) {
+
+			synchronized (surfaceHolder) {
 				boolean okStart = false;
 
 				// Can only go left or right
@@ -389,32 +373,26 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 				if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT)
 					okStart = true;
 
-				if (okStart && gameMode == READY || gameMode == LOSE)
-				{
+				if (okStart && gameMode == READY || gameMode == LOSE) {
 
 					doStart();
 					return true;
 
 				}
 
-				else if (okStart && gameMode == PAUSE)
-				{
+				else if (okStart && gameMode == PAUSE) {
 					unpause();
 					return true;
 
-				}
-				else if (gameMode == RUNNING)
-				{
+				} else if (gameMode == RUNNING) {
 
-					if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT)
-					{
-						jarX -= 1;
+					if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+						jarLeft -= 1;
 						return true;
 
 					}
-					if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT)
-					{
-						jarX += 1;
+					if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+						jarLeft += 1;
 						return true;
 
 					}
@@ -427,8 +405,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 
 		}
 
-		public void doDraw(Canvas canvas)
-		{
+		public void doDraw(Canvas canvas) {
 
 			Rect dest = new Rect(0, 0, getWidth(), getHeight());
 			Paint paint = new Paint();
@@ -436,39 +413,31 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 			paint.setFilterBitmap(true);
 
 			canvas.drawBitmap(bgrnd, null, dest, paint);
-		
+
+			int fruit = RNG.nextInt(pictures.size());
+			
 			canvas.save();
 			
-			//canvas.drawBitmap(parachuter, parachuters.get(i).getX(), parachuters.get(i).getY(), null);
-			//orange.setBounds(new Rect(0, 0, 100, 100));
-			/*
-			Display display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-			int width = display.getWidth();
-			int height = display.getHeight();
-		*/
-			//orangeD.setBounds(new Rect(300, 400, 350, 450));
-			//orangeD.draw(canvas);
-			jarDraw.setBounds(jarX, jarY, jarX+210, 800);
+			// jarDraw.setBounds(jarLeft, jarTop, jarLeft+210, 800);
+			jarDraw.setBounds(jarLeft, jarTop, jarRight, jarBottom);
 			jarDraw.draw(canvas);
-			//orangeD.BitmapDrawable(orange, getWidth()/2, getHeight()/2, paint);
-			//orange.draw(canvas);
 			
-			//jar.setBounds(new Rect(200, 500, 380, 250));
-			//jar.setHeight(100);
-			//jar.setWidth(175);
+			pictures.get(fruit).setBounds(fruitLeft, fruitTop, fruitRight, fruitBottom);
+			pictures.get(fruit).draw(canvas);
 			
-			//jarScale.recycle();
-			//canvas.drawBitmap(jarScale, getWidth()/2, getHeight(), paint);
+			orangeDraw.setBounds(fruitLeft + 50 , fruitTop - 20, fruitRight + 50, fruitBottom - 20);
+			orangeDraw.draw(canvas);
 			
-			//jar.draw(canvas);
-			//jar.setBounds(width/2, height/2, 300, 200);
-			
+			if(fruitBottom < canvas.getHeight())
+			{
+			fruitTop += 8;
+			fruitBottom += 8;
+			}
 			canvas.restore();
 
 		}
 
-		public void update()
-		{
+		public void update() {
 			long now = System.currentTimeMillis();
 
 			if (lastTime > now)
@@ -476,23 +445,64 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 
 		}
 	}
-
-	private Context context;
+	
 
 	private TextView statusText;
 
 	private OjThread thread;
 
-	public GameView(Context context, AttributeSet attr)
+	class fruitThread extends Thread
 	{
+		public fruitThread()
+		{
+		}
+		
+		public void run()
+		{
+			while (true) {
+				Canvas c = null;
+				try {
+					c = thread.surfaceHolder.lockCanvas(null);
+					synchronized (thread.surfaceHolder) {
+
+						doDraw(c);
+
+					}
+
+				} finally {
+					if (c != null) {
+						thread.surfaceHolder.unlockCanvasAndPost(c);
+
+					}
+
+				}
+
+			}
+
+		}
+		
+		public void doDraw(Canvas canvas)
+		{
+			Resources res = theContext.getResources();
+			
+			orange = BitmapFactory.decodeResource(res, R.drawable.orange);
+			BitmapDrawable orangeDraw = new BitmapDrawable(getResources(), orange);
+			
+			orangeDraw.setBounds(100, 100,  150, 150);
+			orangeDraw.draw(canvas);
+			
+		}
+		
+	}
+	
+	
+	public GameView(Context context, AttributeSet attr) {
 		super(context, attr);
 		SurfaceHolder holder = getHolder();
 		holder.addCallback(this);
 
-		thread = new OjThread(holder, context, new Handler()
-		{
-			public void handleMessage(Message m)
-			{
+		thread = new OjThread(holder, context, new Handler() {
+			public void handleMessage(Message m) {
 
 			}
 
@@ -502,32 +512,31 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 
 	}
 
-	public OjThread getThread()
-	{
+	/**
+	 * @author user Thread responsible for generating fruits i.e populating the
+	 *         fruit array and making the fruits fall.
+	 */
+	
+	public OjThread getThread() {
 
 		return thread;
 
 	}
 
-	public boolean onKeyDown(int keyCode, KeyEvent msg)
-	{
+	public boolean onKeyDown(int keyCode, KeyEvent msg) {
 		return thread.doKeyDown(keyCode, msg);
 
 	}
 
-	
-	public void onWindowFocusChanged(boolean hasWindowFocus)
-	{
+	public void onWindowFocusChanged(boolean hasWindowFocus) {
 
-		if (!hasWindowFocus)
-		{
+		if (!hasWindowFocus) {
 			thread.pause();
 		}
 
 	}
 
-	public void setTextview(TextView text)
-	{
+	public void setTextview(TextView text) {
 
 		statusText = text;
 
@@ -535,40 +544,35 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
-			int height)
-	{
+			int height) {
 		// Surface does not change;
 
 	}
 
 	@Override
-	public void surfaceCreated(SurfaceHolder arg0)
-	{
+	public void surfaceCreated(SurfaceHolder arg0) {
 		thread.setRunning(true);
 		thread.start();
 
 	}
 
 	@Override
-	public void surfaceDestroyed(SurfaceHolder arg0)
-	{
+	public void surfaceDestroyed(SurfaceHolder arg0) {
 		boolean retry = true;
 		thread.setRunning(false);
-		while (retry)
-		{
+		while (retry) {
 
-			try
-			{
+			try {
 				thread.join();
 				retry = false;
-			}
-			catch (InterruptedException e)
-			{
+			} catch (InterruptedException e) {
 
 			}
 
 		}
 
 	}
+	
+	
 
 }

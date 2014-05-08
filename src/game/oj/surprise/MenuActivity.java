@@ -16,7 +16,6 @@ import android.os.Build;
 
 public class MenuActivity extends ActionBarActivity {
 
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -39,10 +38,7 @@ public class MenuActivity extends ActionBarActivity {
 				overridePendingTransition(R.animator.activityfadein,
 						R.animator.activityfadeout);
 
-				while (true) {
-					music.start();
-
-				}
+				music.start();
 
 			}
 
@@ -53,12 +49,6 @@ public class MenuActivity extends ActionBarActivity {
 	public void playGame(View v) {
 
 		startActivity(new Intent(MenuActivity.this, GameActivity.class));
-		MediaPlayer music = MediaPlayer.create(MenuActivity.this,
-				R.raw.menumusic);
-		/*if (music.isPlaying()){
-		music.stop();
-		}*/
-		music.release();
 	}
 
 	@Override
