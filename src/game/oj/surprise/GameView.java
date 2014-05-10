@@ -345,7 +345,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			setState(RUNNING);
 
 		}
-
+/*
 		public void moveLeft() {
 			if (jarLeft > 80) {
 				jarLeft -= 27;
@@ -360,7 +360,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				jarRight += 27;
 			}
 		}
-
+*/
 		boolean doKeyDown(int keyCode, KeyEvent msg) {
 
 			synchronized (surfaceHolder) {
