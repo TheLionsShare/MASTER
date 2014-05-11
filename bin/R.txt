@@ -279,7 +279,7 @@ int id always 0x7f07000b
 int id beginning 0x7f070011
 int id checkbox 0x7f07002d
 int id collapseActionView 0x7f07000d
-int id container 0x7f07003f
+int id container 0x7f070040
 int id default_activity_button 0x7f070028
 int id dialog 0x7f07000e
 int id disableHome 0x7f070008
@@ -297,9 +297,9 @@ int id ifRoom 0x7f07000a
 int id image 0x7f070027
 int id imageButton1 0x7f07003d
 int id imageButton2 0x7f07003e
-int id imageView1 0x7f070045
-int id imageView2 0x7f070041
-int id imageView3 0x7f070040
+int id imageView1 0x7f07003f
+int id imageView2 0x7f070042
+int id imageView3 0x7f070041
 int id listMode 0x7f070001
 int id list_item 0x7f070029
 int id middle 0x7f070012
@@ -326,9 +326,9 @@ int id showTitle 0x7f070006
 int id split_action_bar 0x7f07001e
 int id submit_area 0x7f070039
 int id tabMode 0x7f070002
-int id textView1 0x7f070042
-int id textView3 0x7f070044
-int id textView4 0x7f070043
+int id textView1 0x7f070043
+int id textView3 0x7f070045
+int id textView4 0x7f070044
 int id title 0x7f07002b
 int id top_action_bar 0x7f070020
 int id up 0x7f070021

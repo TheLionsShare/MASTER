@@ -95,7 +95,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		// Draw background as bitmap: more efficient
 		private Bitmap bgrnd;
 
-		private BitmapDrawable jarDraw;
+	    private BitmapDrawable jarDraw;
 		private BitmapDrawable orangeDraw;
 		private BitmapDrawable monkeyDraw;
 		private BitmapDrawable appleDraw;
@@ -142,7 +142,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			bgrnd = BitmapFactory.decodeResource(res, R.drawable.jungle5);
 			// orange = BitmapFactory.decodeResource(res, R.drawable.orange);
 			orange = BitmapFactory.decodeResource(res, R.drawable.orange);
-			jar = BitmapFactory.decodeResource(res, R.drawable.ceramic);
+		//	jar = BitmapFactory.decodeResource(res, R.drawable.ceramic);
 			monkey = BitmapFactory.decodeResource(res, R.drawable.monkey);
 			apple = BitmapFactory.decodeResource(res, R.drawable.apple);
 			banana = BitmapFactory.decodeResource(res, R.drawable.banana);
@@ -152,7 +152,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			watermelon = BitmapFactory.decodeResource(res,
 					R.drawable.watermelon);
 
-			jarDraw = new BitmapDrawable(getResources(), jar);
+	//		jarDraw = new BitmapDrawable(getResources(), jar);
 			orangeDraw = new BitmapDrawable(getResources(), orange);
 			bananaDraw = new BitmapDrawable(getResources(), banana);
 			monkeyDraw = new BitmapDrawable(getResources(), monkey);
@@ -419,8 +419,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			canvas.save();
 			
 			// jarDraw.setBounds(jarLeft, jarTop, jarLeft+210, 800);
-			jarDraw.setBounds(jarLeft, jarTop, jarRight, jarBottom);
-			jarDraw.draw(canvas);
+		//	jarDraw.setBounds(jarLeft, jarTop, jarRight, jarBottom);
+		//	jarDraw.draw(canvas);
 			
 			pictures.get(fruit).setBounds(fruitLeft, fruitTop, fruitRight, fruitBottom);
 			pictures.get(fruit).draw(canvas);

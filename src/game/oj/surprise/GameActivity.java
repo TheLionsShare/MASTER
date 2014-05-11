@@ -1,13 +1,20 @@
 package game.oj.surprise;
 
+import game.oj.surprise.GameView.OjThread;
+
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
@@ -15,9 +22,12 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
@@ -31,6 +41,10 @@ import android.widget.RelativeLayout.LayoutParams;
 
 public class GameActivity extends Activity {
 
+	// gv jar
+
+	//
+
 	private int[] FRUIT = { R.drawable.orange, R.drawable.orange,
 			R.drawable.orange, R.drawable.orange, R.drawable.apple,
 			R.drawable.banana, R.drawable.watermelon, R.drawable.grape,
@@ -42,9 +56,7 @@ public class GameActivity extends Activity {
 	private ArrayList<View> mAllImageViews = new ArrayList<View>();
 
 	private float mScale;
-
-	private Context context;
-
+ 
 	private BitmapDrawable jarDraw;
 	private int jarLeft = 550;
 	private int jarTop = 550;
@@ -53,7 +65,73 @@ public class GameActivity extends Activity {
 
 	private static int transLeft = 1;
 	private static int transRight = 1;
-	
+
+	public static final int MAX_DELAY = 6000;
+	public static final int ANIM_DURATION = 5000;
+	public static final int EMPTY_MESSAGE_WHAT = 0x001;
+
+	public void startAnimation(final ImageView aniView) {
+
+		aniView.setPivotX(aniView.getWidth() / 2);
+		aniView.setPivotY(aniView.getHeight() / 2);
+
+		long delay = new Random().nextInt(MAX_DELAY);
+
+		final ValueAnimator animator = ValueAnimator.ofFloat(0, 1);
+		animator.setDuration(ANIM_DURATION); // falling speed
+		animator.setInterpolator(new AccelerateInterpolator());
+		animator.setStartDelay(delay);
+
+		animator.addListener(new Animator.AnimatorListener() {
+			
+			@Override
+			public void onAnimationStart(Animator animation) {
+
+				int angle = 50 + (int) (Math.random() * 101);
+				int movexR = new Random().nextInt(mDisplaySize.right);
+				int toggle = new Random().nextInt(2);
+
+				
+				float value = ((Float) (((ValueAnimator) animation).getAnimatedValue()))
+						.floatValue();
+
+				aniView.setRotation(angle * value);
+				if (toggle % 2 == 0) {
+					aniView.setTranslationX((movexR - 150) * value / 2);
+					
+					
+				} else {
+					aniView.setTranslationX((movexR - 150) * -value / 2);
+					
+				}
+
+				aniView.setTranslationY((mDisplaySize.bottom + (150 * mScale))
+						* value + 20);
+								
+			}
+			
+			@Override
+			public void onAnimationRepeat(Animator animation) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onAnimationEnd(Animator animation) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onAnimationCancel(Animator animation) {
+				// TODO Auto-generated method stub
+				
+			}
+		 
+		});
+		animator.start();
+	}
+
 	public void onCreate(Bundle savedInstanceState) {
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -86,47 +164,6 @@ public class GameActivity extends Activity {
 															// falling
 	}
 
-	public static final int MAX_DELAY = 6000;
-	public static final int ANIM_DURATION = 5000;
-	public static final int EMPTY_MESSAGE_WHAT = 0x001;
-
-	public void startAnimation(final ImageView aniView) {
-
-		aniView.setPivotX(aniView.getWidth() / 2);
-		aniView.setPivotY(aniView.getHeight() / 2);
-
-		long delay = new Random().nextInt(MAX_DELAY);
-
-		final ValueAnimator animator = ValueAnimator.ofFloat(0, 1);
-		animator.setDuration(ANIM_DURATION); // falling speed
-		animator.setInterpolator(new AccelerateInterpolator());
-		animator.setStartDelay(delay);
-
-		animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-			int angle = 50 + (int) (Math.random() * 101);
-			int movexR = new Random().nextInt(mDisplaySize.right);
-			int toggle = new Random().nextInt(2);
-
-			@Override
-			public void onAnimationUpdate(ValueAnimator animation) {
-				float value = ((Float) (animation.getAnimatedValue()))
-						.floatValue();
-
-				aniView.setRotation(angle * value);
-				if (toggle % 2 == 0) {
-					aniView.setTranslationX((movexR - 150) * value / 2);
-				} else {
-					aniView.setTranslationX((movexR - 150) * -value / 2);
-				}
-
-				aniView.setTranslationY((mDisplaySize.bottom + (150 * mScale))
-						* value + 20);
-			}
-		});
-		animator.start();
-	}
-
 	private Handler mHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -152,23 +189,29 @@ public class GameActivity extends Activity {
 			LayoutInflater inflate = LayoutInflater.from(GameActivity.this);
 			ImageView imageView = (ImageView) inflate.inflate(
 					R.layout.game_image, null);
-			ImageView jView = (ImageView) inflate.inflate(R.layout.game_image,
-					null);
-			jView.setId(10);
-
-			Drawable j = getResources().getDrawable(R.drawable.ceramic);
-			((ImageView) jView).setImageDrawable(j);
-
+			// ImageView jView = (ImageView)
+			// inflate.inflate(R.layout.game_image,
+			// null);
+			// jView.setId(10);
+			// Drawable j = getResources().getDrawable(R.drawable.ceramic);
+			// ((ImageView) jView).setImageDrawable(j);
+			//
 			imageView.setImageDrawable(d);
-
-			mRootLayout.addView(jView);
+			
+			if(imageView.getY() > 300)
+			{
+				mAllImageViews.remove(imageView);
+			}
+			
 			//
-			mAllImageViews.add(jView);
-			//
-			LayoutParams jarLayout = (LayoutParams) jView.getLayoutParams();
-			jarLayout.setMargins(jarLeft, 550, jarRight, 900);
-			jarLayout.width = (int) (100 * mScale);
-			jarLayout.height = (int) (60 * mScale);
+			// mRootLayout.addView(jView);
+			// //
+			// mAllImageViews.add(jView);
+			// //
+			// LayoutParams jarLayout = (LayoutParams) jView.getLayoutParams();
+			// jarLayout.setMargins(jarLeft, 550, jarRight, 900);
+			// jarLayout.width = (int) (100 * mScale);
+			// jarLayout.height = (int) (60 * mScale);
 
 			mRootLayout.addView(imageView);
 			mAllImageViews.add(imageView);
@@ -185,10 +228,23 @@ public class GameActivity extends Activity {
 
 	public void moveLeft(View v) {
 
-		final ImageView jar = (ImageView) findViewById(10);
-		if (jar.getLeft() > 100) {
-			jar.setTranslationX(-27 * transLeft);
+		View jarView = findViewById(R.id.imageView1);
+		if(transLeft < 13)
+		{
+			jarView.setTranslationX(-27 * transLeft);
 			transLeft++;
+			transRight--;
+		}
+
+	}
+
+	public void moveRight(View v) {
+		View jarView = findViewById(R.id.imageView1);
+		if(transRight < 13)
+		{
+			jarView.setTranslationX(27 * transRight);
+			transRight++;
+			transLeft--;
 		}
 
 	}
